@@ -5,9 +5,11 @@ import path from 'path';
 import checkDiskSpace from 'check-disk-space';
 
 const app = express();
+const ROOT = path.resolve(__dirname, fs.existsSync(path.join(__dirname, 'views')) ? '.' : '..');
+
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(ROOT, 'views'));
+app.use(express.static(path.join(ROOT, 'public')));
 app.set('trust proxy', 1);
 
 // ---------------------------------------------------------------------------
