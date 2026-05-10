@@ -1,26 +1,22 @@
 {
   "name": "devops-demo-app",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "tsx watch server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "dependencies": {
-    "next": "16.2.4",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "check-disk-space": "^3",
+    "ejs": "^3",
+    "express": "^4"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@types/ejs": "^3",
+    "@types/express": "^4",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.4",
-    "tailwindcss": "^4",
+    "tsx": "^4",
     "typescript": "^5"
   }
 }

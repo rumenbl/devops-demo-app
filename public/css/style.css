@@ -1,0 +1,11 @@
+.envtable {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.envtable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #6c757d; /* matches table-striped on bg-secondary */
+}

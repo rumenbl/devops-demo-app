@@ -1,0 +1,187 @@
+<%- include('_head', { title: 'DevOps Demo App' }) %>
+
+<div class="row g-4">
+
+  <!-- Card 1: System Runtime Info -->
+  <div class="col-lg-6">
+    <div class="card h-100 shadow-sm text-white bg-secondary">
+      <div class="card-header bg-info h5 mb-0">
+        <i class="fa-solid fa-microchip me-2"></i>System Runtime Information
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-striped h6 mb-0">
+          <tbody>
+
+            <tr>
+              <td><i class="fa fa-cube"></i></td>
+              <td>Containerized</td>
+              <td>
+                <% if (isContainer) { %>
+                  Looks like we're running in a container! 😁
+                <% } else { %>
+                  Not running as a container 😢
+                <% } %>
+              </td>
+            </tr>
+
+            <tr>
+              <td><i class="fa fa-project-diagram"></i></td>
+              <td>Kubernetes</td>
+              <td>
+                <% if (isKube) { %>
+                  We're also running in a Kubernetes pod! 😃
+                <% } else { %>
+                  Not running in Kubernetes 😢
+                <% } %>
+              </td>
+            </tr>
+
+            <tr>
+              <td><i class="fas fa-lightbulb"></i></td>
+              <td>App Insights</td>
+              <td>
+                <% if (hasAppInsights) { %>
+                  Reporting data to App Insights, nice job!
+                <% } else { %>
+                  Not reporting data to App Insights
+                <% } %>
+              </td>
+            </tr>
+
+            <tr>
+              <td><i class="fa fa-home"></i></td>
+              <td>Hostname</td>
+              <td><code><%= hostname %></code></td>
+            </tr>
+
+            <tr>
+              <td><i class="fa fa-clock"></i></td>
+              <td>System Uptime</td>
+              <td><%= uptimeHuman %></td>
+            </tr>
+
+            <tr>
+              <td><i class="fas fa-laptop"></i></td>
+              <td>OS Version</td>
+              <td><%= osType %> &mdash; <%= osRelease %></td>
+            </tr>
+
+            <tr>
+              <td><i class="fa fa-wrench"></i></td>
+              <td>Architecture</td>
+              <td><%= arch %></td>
+            </tr>
+
+            <tr>
+              <td><i class="fa fa-microchip"></i></td>
+              <td>Processors</td>
+              <td><%= cpuCount %> &times; <%= cpuModel %></td>
+            </tr>
+
+            <tr>
+              <td><i class="fas fa-memory"></i></td>
+              <td>Memory</td>
+              <td><%= totalMemMB %> MB total &bull; <%= freeMemMB %> MB free</td>
+            </tr>
+
+            <tr>
+              <td><i class="fab fa-node-js"></i></td>
+              <td>Node Version</td>
+              <td><%= nodeVersion %></td>
+            </tr>
+
+            <tr>
+              <td><i class="fa fa-link"></i></td>
+              <td>URL Accessed</td>
+              <td><code class="text-break"><%= accessedUrl %></code></td>
+            </tr>
+
+            <% if (releaseInfo) { %>
+            <tr>
+              <td><i class="fa fa-window-restore"></i></td>
+              <td>Release Info</td>
+              <td><%= releaseInfo %></td>
+            </tr>
+            <% } %>
+
+          </tbody>
+        </table>
+
+        <!-- Network Interfaces -->
+        <div class="px-3 pb-1 pt-2">
+          <h6 class="text-white-50"><i class="fa-solid fa-network-wired me-1"></i>Network Interfaces</h6>
+          <% if (networkInterfaces.length > 0) { %>
+          <table class="table table-sm table-bordered mb-2">
+            <thead class="table-dark">
+              <tr><th>Interface</th><th>Family</th><th>Address / CIDR</th></tr>
+            </thead>
+            <tbody>
+              <% for (const iface of networkInterfaces) { %>
+              <tr>
+                <td><%= iface.name %></td>
+                <td><%= iface.family %></td>
+                <td><code><%= iface.cidr ?? iface.address %></code></td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+          <% } else { %>
+          <p class="text-white-50 small">No external interfaces found.</p>
+          <% } %>
+        </div>
+
+        <!-- Disk Storage -->
+        <div class="px-3 pb-3">
+          <h6 class="text-white-50"><i class="fa-solid fa-hard-drive me-1"></i>Storage (<%= disk ? disk.path : 'N/A' %>)</h6>
+          <% if (disk) { %>
+          <div class="progress mb-1" style="height:22px">
+            <div class="progress-bar bg-warning text-dark fw-semibold" role="progressbar"
+                 style="width: <%= disk.usedPct %>%"
+                 aria-valuenow="<%= disk.usedPct %>" aria-valuemin="0" aria-valuemax="100">
+              <%= disk.usedPct %>% used
+            </div>
+          </div>
+          <small class="text-white-50">
+            Used: <strong><%= disk.usedGB %> GB</strong>
+            &bull; Free: <strong><%= disk.freeGB %> GB</strong>
+            &bull; Total: <strong><%= disk.totalGB %> GB</strong>
+          </small>
+          <% } else { %>
+          <p class="text-white-50 small mb-0">Disk info unavailable.</p>
+          <% } %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Env Vars -->
+  <div class="col-lg-6">
+    <div class="card h-100 shadow-sm text-white bg-secondary">
+      <div class="card-header bg-info h5 mb-0">
+        <i class="fa fa-sitemap me-2"></i>Server Environmental Variables
+        <span class="badge bg-dark ms-2"><%= envVars.length %></span>
+      </div>
+      <div class="card-body p-0">
+        <div class="envtable">
+          <table class="table table-striped table-hover mb-0">
+            <thead>
+              <tr><th>Variable</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+              <% for (const [key, val] of envVars) { %>
+              <tr>
+                <td><code><%= key %></code></td>
+                <td class="envvars text-break"><small><%= val %></small></td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /row -->
+
+<%- include('_foot') %>
